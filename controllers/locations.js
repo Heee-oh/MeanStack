@@ -5,7 +5,7 @@ const apiOptions = {
 };
 
 if (process.env.NODE_ENV === 'production') {
-  apiOptions.server = 'https://loc8r-mobile.onrender.com';
+  apiOptions.server = 'https://meanstack-69rg.onrender.com';
 } 
 
 

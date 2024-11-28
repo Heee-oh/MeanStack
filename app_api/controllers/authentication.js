@@ -29,31 +29,35 @@ const register = async (req, res) => {
 };
 
 
-const login = (req, res) => {
+const login = async (req, res) => {
     if (!req.body.email || !req.body.password) {
         return res
             .status(400)
-            .json({"message": "All fields required"});
+            .json({ message: "All fields required" });
     }
-    passport.authenticate('local', (err, user, info) => {
-        let token;
-        if(err) {
-            return res
-                .status(404)
-                .json(err);
+
+    passport.authenticate('local', async (err, user, info) => {
+        if (err) {
+            console.error("Authentication error:", err); // 에러 로그 출력
+            return res.status(404).json(err);
         }
-        if(user) {
-            token = user.generateJwt();
-            res
-                .status(200)
-                .json({token});
+
+        if (user) {
+            try {
+                // JWT 생성
+                const token = user.generateJwt();
+                return res.status(200).json({ token });
+            } catch (tokenError) {
+                console.error("Token generation error:", tokenError);
+                return res.status(500).json({ message: "Token generation failed" });
+            }
         } else {
-            res
-                .status(401)
-                .json(info);
+            // 인증 실패 정보 반환
+            return res.status(401).json(info);
         }
     })(req, res);
 };
+
 
 module.exports = {
     register,
